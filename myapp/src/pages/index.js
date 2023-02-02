@@ -2,10 +2,23 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export default function Home(props) {
+  const [dogName, setDogName] = useState([]);
+
+  
+
+  useEffect(()=>{
+    getDogName();
+  }, [])
+
+  useEffect(() => {
+    console.log(dogName)
+  }, [dogName])
+    
   return (
     <>
       <Head>
@@ -16,9 +29,22 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.description}>
-          <h1>Next App</h1>
+          {props.name}
+          <ul>
+           {props.dogs.map(dog => <li>{dog}</li>)}
+          </ul>
         </div>
       </main>
     </>
   )
+}
+
+export async function getServerSideProps() {
+  const response = await fetch('https://dog.ceo/api/breeds/list/all');
+  const result = await response.json();
+
+  return ({props: {
+    name: "rajat",
+    dogs: Object.keys(result.message)
+  }})
 }
